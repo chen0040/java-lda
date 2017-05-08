@@ -1,7 +1,10 @@
 package com.github.chen0040.lda;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -14,6 +17,8 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 public class Lda {
+
+    private static final Logger logger = LoggerFactory.getLogger(Lda.class);
 
     private double documentTopicSmoothing = 0.1;
     private double topicWordSmoothing = 0.01;
@@ -36,19 +41,17 @@ public class Lda {
 
     public LdaModel model;
 
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private StopWordRemoval stopWordFilter;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private LowerCase lowerCaseFilter;
 
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private Random random = new Random();
-
-    public LdaModel getModel(){
-        return model;
-    }
-
-    public void setModel(LdaModel model){
-        this.model = model;
-    }
-
 
     public void addStopWords(List<String> stopWords){
         this.stopWordFilter.join(stopWords);
@@ -63,6 +66,8 @@ public class Lda {
     private void notifyProgressChanged(String message){
         if(progressListener != null) {
             progressListener.accept(message);
+        } else {
+            logger.info(message);
         }
     }
 
@@ -91,11 +96,7 @@ public class Lda {
         List<TupleTwo<Integer, TupleTwo<List<String>, Long>>> result = new ArrayList<>();
         for(int i=0; i < m; ++i){
             Document doc = batch1.get(i);
-            doc.getRawContents();
-
-            List<String> words = doc.getRawContents();
-
-            words = BasicTokenizer.doTokenize(words);
+            List<String> words = BasicTokenizer.doTokenize(doc.getText());
 
             words = trim(words);
 
@@ -136,7 +137,7 @@ public class Lda {
     }
 
 
-    public LdaBatchUpdateResult fit(List<Document> batch0) {
+    public LdaResult fit(List<Document> batch0) {
         stopWordFilter.setRemoveNumbers(removeNumber);
         stopWordFilter.setRemoveIPAddress(removeIPAddress);
 
@@ -245,7 +246,7 @@ public class Lda {
         model.sortTopicWords();
         model.createTopicSummary(maxTopicSummaryLength);
 
-        LdaBatchUpdateResult result = new LdaBatchUpdateResult(model, documents);
+        LdaResult result = new LdaResult(model, documents);
 
         notifyProgressChanged("Completed!");
 
@@ -332,7 +333,7 @@ public class Lda {
             }
         }
 
-        System.out.println("Vocabulary Size: "+candidates.size());
+        logger.info("Vocabulary Size: {}", candidates.size());
 
         model.initialize(candidates);
     }

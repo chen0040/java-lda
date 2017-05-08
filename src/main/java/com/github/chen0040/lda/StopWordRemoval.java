@@ -8,7 +8,7 @@ import java.util.*;
 
 public class StopWordRemoval {
     //Stopwords list from Rainbow
-    private HashSet<String> stopWords = new HashSet<>();
+    private Set<String> stopWords = new HashSet<>();
     private boolean removeNumbers = true;
     private boolean removeIPAddress = true;
 

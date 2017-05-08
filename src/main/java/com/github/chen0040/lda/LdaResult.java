@@ -7,12 +7,12 @@ import java.util.List;
 /**
  * Created by xschen on 11/4/15.
  */
-public class LdaBatchUpdateResult {
+public class LdaResult {
     private LdaModel model;
     private List<Doc> documents;
     private long docCount;
 
-    public LdaBatchUpdateResult(LdaModel model, List<Doc> documents){
+    public LdaResult(LdaModel model, List<Doc> documents){
         this.model = model;
         this.documents = documents;
         this.docCount = documents.size();

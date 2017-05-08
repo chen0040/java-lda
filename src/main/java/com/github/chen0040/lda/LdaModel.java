@@ -1,6 +1,9 @@
 package com.github.chen0040.lda;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -10,6 +13,9 @@ import java.util.function.Function;
  * Created by xschen on 11/3/15.
  */
 public class LdaModel {
+
+    private static final Logger logger = LoggerFactory.getLogger(LdaModel.class);
+
     public Vocabulary vocabulary;
     public int topicCount;
     public int[][] wordTopicCounts;
@@ -65,7 +71,7 @@ public class LdaModel {
                 sb.append(" ");
             }
             Frequency token = topicWordCountsByTopic.get(wordIndex);
-            sb.append(vocabulary.get(token.wordIndex)+"("+token.count+")");
+            sb.append(vocabulary.get(token.wordIndex)).append("(").append(token.count).append(")");
         }
         return sb.toString();
     }
@@ -142,7 +148,7 @@ public class LdaModel {
         double entropy = Math.log(sum) - (1.0 / sum) * sum(counts, x ->  x == 0 ? x : x * Math.log(x));
 
         if(Double.isNaN(entropy)){
-            System.out.println("entropy spotted");
+            logger.warn("NaN entropy");
         }
         return entropy;
     }
@@ -213,9 +219,9 @@ public class LdaModel {
             wordTopicCounts[wordIndex] = new int[topicCount];
         }
 
-        topicWordCounts = new ArrayList[topicCount];
+        topicWordCounts = (List<Frequency>[])new ArrayList[topicCount];
         for (int topicIndex = 0; topicIndex < topicCount; topicIndex++) {
-            topicWordCounts[topicIndex] = new ArrayList();
+            topicWordCounts[topicIndex] = new ArrayList<>();
             for(int wordIndex = 0; wordIndex < wordCount; ++wordIndex){
                 topicWordCounts[topicIndex].add(new Frequency(wordIndex, 0));
             }
