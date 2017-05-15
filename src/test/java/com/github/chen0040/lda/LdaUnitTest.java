@@ -75,7 +75,9 @@ public class LdaUnitTest {
          }
       }
 
-      for(Doc doc : result.documents()){
+      List<Doc> list = result.documents();
+      for(int i=0; i < 3; i++){
+         Doc doc = list.get(i);
          logger.info("Doc: {}", doc.getContent());
          List<TupleTwo<Integer, Double>> topTopics = doc.topTopics(3);
 
