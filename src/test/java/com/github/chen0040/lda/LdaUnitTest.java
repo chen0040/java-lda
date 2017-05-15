@@ -74,5 +74,15 @@ public class LdaUnitTest {
             logger.info("Doc ({}, {}): {}", docIndex, ranking, docContent);
          }
       }
+
+      for(Doc doc : result.documents()){
+         logger.info("Doc: {}", doc.getContent());
+         List<TupleTwo<Integer, Double>> topTopics = doc.topTopics(3);
+
+         logger.info("Top Topics: {} (score: {}), {} (score: {}), {} (score: {})",
+                 topTopics.get(0)._1(), topTopics.get(0)._2(),
+                 topTopics.get(1)._1(), topTopics.get(1)._2(),
+                 topTopics.get(2)._1(), topTopics.get(2)._2());
+      }
    }
 }

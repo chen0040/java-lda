@@ -9,7 +9,7 @@ Package provides java implementation of the latent dirichlet allocation (LDA) fo
 <dependency>
   <groupId>com.github.chen0040</groupId>
   <artifactId>java-lda</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
@@ -51,5 +51,19 @@ for(int topicIndex = 0; topicIndex < topicCount; ++topicIndex){
     String docContent = entry._1().getContent();
     System.out.println("Doc (" + docIndex + ", " + score + ")): " + docContent);
  }
+}
+```
+
+The sample code belows takes the "result" variable from the above code and list the top 3 relevant topics of each document (which is one of the items in the "docs" list variable).
+ 
+```java
+for(Doc doc : result.documents()){
+ logger.info("Doc: {}", doc.getContent());
+ List<TupleTwo<Integer, Double>> topTopics = doc.topTopics(3);
+
+ logger.info("Top Topics: {} (score: {}), {} (score: {}), {} (score: {})",
+         topTopics.get(0)._1(), topTopics.get(0)._2(),
+         topTopics.get(1)._1(), topTopics.get(1)._2(),
+         topTopics.get(2)._1(), topTopics.get(2)._2());
 }
 ```
