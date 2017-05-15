@@ -62,18 +62,19 @@ public class LdaModel {
         return sb.toString();
     }
 
-    public String describeTopic(int selectedTopicIndex, int length){
-        StringBuilder sb = new StringBuilder();
+    public List<TupleTwo<String, Integer>> topicWords(int selectedTopicIndex, int length){
+        List<TupleTwo<String, Integer>> result = new ArrayList<>();
+
         List<Frequency> topicWordCountsByTopic = topicWordCounts[selectedTopicIndex];
         int wordCount = Math.min(wordCount(), length);
+
         for(int wordIndex = 0; wordIndex < wordCount; wordIndex++ ){
-            if(wordIndex != 0){
-                sb.append(" ");
-            }
-            Frequency token = topicWordCountsByTopic.get(wordIndex);
-            sb.append(vocabulary.get(token.wordIndex)).append("(").append(token.count).append(")");
+            Frequency freq = topicWordCountsByTopic.get(wordIndex);
+            String word = vocabulary.get(freq.wordIndex);
+            int value = freq.count;
+            result.add(new TupleTwo<>(word, value));
         }
-        return sb.toString();
+        return result;
     }
 
     private void copy(LdaModel rhs){
@@ -247,5 +248,7 @@ public class LdaModel {
             topicSummaries[topicIndex] = topicSummary(topicIndex, length);
         }
     }
+
+
 
 }

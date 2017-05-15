@@ -79,13 +79,21 @@ public class LdaUnitTest {
       method.setMaxVocabularySize(100000);
       LdaResult result = method.fit(docs);
 
+
       int topicCount = result.topicCount();
 
       logger.info("Topic Count: "+topicCount);
 
       for(int topicIndex = 0; topicIndex < topicCount; ++topicIndex){
          String topicSummary = result.topicSummary(topicIndex);
+         List<TupleTwo<String, Integer>> topKeyWords = result.topKeyWords(topicIndex, 10);
+         List<TupleTwo<Doc, Double>> topDocuments = result.topDocuments(topicIndex, 10);
+
          logger.info("Topic #{}: {}", topicIndex+1, topicSummary);
+
+         for(TupleTwo<String, Integer> entry : topKeyWords){
+            logger.info("Keyword: {}({})", entry._1(), entry._2());
+         }
       }
    }
 }
