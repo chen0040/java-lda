@@ -37,8 +37,8 @@
     </issueManagement>
 
 
-    <name>pLSA in Java</name>
-    <description>Java implementation of probabilistic latent semantic analysis (pLSA)</description>
+    <name>LDA in Java</name>
+    <description>Java implementation of latent dirichlet allocation</description>
     <url>https://github.com/chen0040/java-lda</url>
 
     <distributionManagement>
@@ -94,13 +94,6 @@
         <checkstyle.version>2.17</checkstyle.version>
         <pmd.version>3.5</pmd.version>
         <jacoco.version>0.7.3.201502191951</jacoco.version>
-
-        <fastjson.version>1.2.24</fastjson.version>
-        <guava.version>19.0</guava.version>
-
-        <commons-lang3.version>3.4</commons-lang3.version>
-        <commons-io.version>2.4</commons-io.version>
-        <commons-math.version>3.2</commons-math.version>
 
         <lombok.version>1.16.6</lombok.version>
     </properties>
@@ -495,11 +488,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
+            <groupId>com.github.chen0040</groupId>
+            <artifactId>java-data-text</artifactId>
+            <version>1.0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.chen0040</groupId>
+            <artifactId>java-data-frame</artifactId>
+            <version>1.0.2</version>
+        </dependency>
 
 
     </dependencies>

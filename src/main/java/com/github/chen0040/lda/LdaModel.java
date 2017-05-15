@@ -1,6 +1,10 @@
 package com.github.chen0040.lda;
 
 
+import com.github.chen0040.data.text.BasicVocabulary;
+import com.github.chen0040.data.text.Vocabulary;
+import com.github.chen0040.data.text.VocabularyTableCell;
+import com.github.chen0040.data.utils.TupleTwo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,11 +57,11 @@ public class LdaModel {
         List<Frequency> topicWordCountsByTopic = topicWordCounts[selectedTopicIndex];
         int wordCount = Math.min(wordCount(), length);
 
-        for(int wordIndex = 0; wordIndex < wordCount; wordIndex++ ){
-            if(wordIndex != 0){
+        for(int i = 0; i < wordCount; i++ ){
+            if(i != 0){
                 sb.append(" ");
             }
-            sb.append(vocabulary.get(topicWordCountsByTopic.get(wordIndex).wordIndex));
+            sb.append(vocabulary.get(topicWordCountsByTopic.get(i).getWordIndex()));
         }
         return sb.toString();
     }
@@ -70,8 +74,8 @@ public class LdaModel {
 
         for(int wordIndex = 0; wordIndex < wordCount; wordIndex++ ){
             Frequency freq = topicWordCountsByTopic.get(wordIndex);
-            String word = vocabulary.get(freq.wordIndex);
-            int value = freq.count;
+            String word = vocabulary.get(freq.getWordIndex());
+            int value = freq.getCount();
             result.add(new TupleTwo<>(word, value));
         }
         return result;
@@ -130,14 +134,14 @@ public class LdaModel {
 
         for (int wordIndex = 0; wordIndex < wordCount; ++wordIndex) {
             for (int topicIndex = 0; topicIndex < topicCount; ++topicIndex) {
-                topicWordCounts[topicIndex].get(wordIndex).count = wordTopicCounts[wordIndex][topicIndex];
+                topicWordCounts[topicIndex].get(wordIndex).setCount(wordTopicCounts[wordIndex][topicIndex]);
             }
         }
 
         for (int topicIndex = 0; topicIndex < topicCount; topicIndex++) {
             topicWordCounts[topicIndex].sort((f1, f2)->{
-                if(f1.count > f2.count) return -1;
-                else if(f1.count == f2.count) return 0;
+                if(f1.getCount() > f2.getCount()) return -1;
+                else if(f1.getCount() == f2.getCount()) return 0;
                 else return 1;
             });
         }
@@ -177,9 +181,9 @@ public class LdaModel {
         int wordCount = wordCount();
         for(int wordIndex = 0; wordIndex < wordCount; ++wordIndex){
             VocabularyTableCell cell = new VocabularyTableCell();
-            cell.word = vocabulary.get(wordIndex);
-            cell.wordIndex = wordIndex;
-            cell.count = vocabularyCounts[wordIndex];
+            cell.setWord(vocabulary.get(wordIndex));
+            cell.setWordIndex(wordIndex);
+            cell.setCount(vocabularyCounts[wordIndex]);
 
             if(wordIndex >= maxSize) {
                 int cell2Kick = -1;
@@ -187,8 +191,8 @@ public class LdaModel {
                 int minCount = Integer.MAX_VALUE;
                 for(int i=0; i < table.size(); ++i){
                     VocabularyTableCell cell2Check = table.get(i);
-                    if(cell2Check.count < minCount){
-                        minCount = cell2Check.count;
+                    if(cell2Check.getCount() < minCount){
+                        minCount = cell2Check.getCount();
                         cell2Kick = i;
                     }
                 }
@@ -204,7 +208,7 @@ public class LdaModel {
 
         for(int i=0; i < table.size(); ++i) {
             VocabularyTableCell cell = table.get(i);
-            cell.topicSpecificity = 1.0 - entropy(wordTopicCounts[cell.wordIndex]) / Math.log(topicCount);
+            cell.setTopicSpecificity(1.0 - entropy(wordTopicCounts[cell.getWordIndex()]) / Math.log(topicCount));
         }
         return table;
     }

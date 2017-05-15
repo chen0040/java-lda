@@ -1,5 +1,8 @@
 package com.github.chen0040.lda;
 
+import com.github.chen0040.data.text.VocabularyTableCell;
+import com.github.chen0040.data.utils.TupleTwo;
+
 import java.util.ArrayList;
 import java.util.List;
 

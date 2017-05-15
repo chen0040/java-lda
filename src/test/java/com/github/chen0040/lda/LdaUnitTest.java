@@ -1,6 +1,7 @@
 package com.github.chen0040.lda;
 
 
+import com.github.chen0040.data.utils.TupleTwo;
 import com.github.chen0040.lda.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,18 @@
 package com.github.chen0040.lda;
 
+
+import lombok.Getter;
+import lombok.Setter;
+
+
 /**
  * Created by xschen on 11/3/15.
  */
+@Getter
+@Setter
 public class Token {
-    public int wordIndex;
-    public int topicIndex;
+    private int wordIndex;
+    private int topicIndex;
 
     public Token(int wordIndex, int topicIndex){
         this.wordIndex = wordIndex;

@@ -1,5 +1,9 @@
 package com.github.chen0040.lda;
 
+import com.github.chen0040.data.text.BasicTokenizer;
+import com.github.chen0040.data.text.LowerCase;
+import com.github.chen0040.data.text.StopWordRemoval;
+import com.github.chen0040.data.utils.TupleTwo;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -203,12 +207,12 @@ public class Lda {
                 for (int position = 0; position < currentDoc.tokens.size(); position++) {
                     Token token = currentDoc.tokens.get(position);
 
-                    model.tokensPerTopic[token.topicIndex]--;
+                    model.tokensPerTopic[token.getTopicIndex()]--;
 
-                    int[] currentWordTopicCounts = model.wordTopicCounts[token.wordIndex];
+                    int[] currentWordTopicCounts = model.wordTopicCounts[token.getWordIndex()];
 
-                    currentWordTopicCounts[ token.topicIndex ]--;
-                    docTopicCounts[ token.topicIndex ]--;
+                    currentWordTopicCounts[ token.getTopicIndex() ]--;
+                    docTopicCounts[ token.getTopicIndex() ]--;
 
                     for (int topicIndex = 0; topicIndex < topicCount; topicIndex++) {
                         if (currentWordTopicCounts[topicIndex] > 0) {
@@ -224,16 +228,16 @@ public class Lda {
                         }
                     }
 
-                    token.topicIndex = sampleDiscrete(topicWeights);
+                    token.setTopicIndex(sampleDiscrete(topicWeights));
 
-                    model.tokensPerTopic[token.topicIndex]++;
-                    if (currentWordTopicCounts[ token.topicIndex ] <= 0) {
-                        currentWordTopicCounts[ token.topicIndex ] = 1;
+                    model.tokensPerTopic[token.getTopicIndex()]++;
+                    if (currentWordTopicCounts[ token.getTopicIndex() ] <= 0) {
+                        currentWordTopicCounts[ token.getTopicIndex() ] = 1;
                     }
                     else {
-                        currentWordTopicCounts[ token.topicIndex ] += 1;
+                        currentWordTopicCounts[ token.getTopicIndex() ] += 1;
                     }
-                    docTopicCounts[ token.topicIndex ]++;
+                    docTopicCounts[ token.getTopicIndex() ]++;
                 }
             }
 

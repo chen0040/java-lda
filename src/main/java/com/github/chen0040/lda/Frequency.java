@@ -1,14 +1,19 @@
 package com.github.chen0040.lda;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 
 /**
  * Created by xschen on 11/4/15.
  */
+@Getter
+@Setter
 public class Frequency implements Serializable, Cloneable {
-    public int wordIndex;
-    public int count;
+    private int wordIndex;
+    private int count;
 
     public Frequency(int wordIndex, int count){
         this.wordIndex = wordIndex;
