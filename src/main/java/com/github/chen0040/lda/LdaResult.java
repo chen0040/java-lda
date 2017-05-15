@@ -32,13 +32,13 @@ public class LdaResult {
             return null;
         }
 
-        double docSortSmoothing_local = model.docSortSmoothing;
+        double docSortSmoothing_local = model.getDocSortSmoothing();
         double sumDocSortSmoothing_local = model.sumDocSortSmoothing();
 
         List<TupleTwo<Doc, Double>> scores = new ArrayList<>();
 
         documents.stream().forEach(doc -> {
-            double score = (doc.topicCounts[selectedTopicIndex] + docSortSmoothing_local) / (doc.tokens.size() + sumDocSortSmoothing_local);
+            double score = (doc.topicCounts(selectedTopicIndex) + docSortSmoothing_local) / (doc.getTokens().size() + sumDocSortSmoothing_local);
             scores.add(new TupleTwo<>(doc, score));
         });
 
@@ -46,7 +46,7 @@ public class LdaResult {
     }
 
     public String topicSummary(int selectedTopicIndex){
-        return model.topicSummaries[selectedTopicIndex];
+        return model.getTopicSummary(selectedTopicIndex);
     }
 
     public List<TupleTwo<String, Integer>> topKeyWords(int selectedTopicIndex, int limits) {
@@ -54,7 +54,7 @@ public class LdaResult {
     }
 
     public int topicCount(){
-        return model.topicCount;
+        return model.getTopicCount();
     }
 
     public List<TupleTwo<Doc, Double>> topDocuments(int selectedTopicIndex, int limits) {
@@ -77,7 +77,7 @@ public class LdaResult {
     }
 
     public double[][] getTopicCorrelations() {
-        int topicCount = model.topicCount;
+        int topicCount = model.getTopicCount();
 
         double[][] correlationMatrix = new double[topicCount][];
         for(int i=0; i < topicCount; ++i){
@@ -85,8 +85,8 @@ public class LdaResult {
         }
         double[] topicProbabilities = new double[topicCount];
 
-        double correlationMinTokens_local = model.correlationMinTokens;
-        double correlationMinProportion_local = model.correlationMinProportion;
+        double correlationMinTokens_local = model.getCorrelationMinTokens();
+        double correlationMinProportion_local = model.getCorrelationMinProportion();
 
         // iterate once to get mean log topic proportions
         documents.stream().forEach(doc -> {
@@ -94,10 +94,10 @@ public class LdaResult {
             // We want to find the subset of topics that occur with non-trivial concentration in this document.
             // Only consider topics with at least the minimum number of tokens that are at least 5% of the doc.
             List<Integer> documentTopics = new ArrayList<>();
-            double tokenCutoff = Math.max(correlationMinTokens_local, correlationMinProportion_local * doc.tokens.size());
+            double tokenCutoff = Math.max(correlationMinTokens_local, correlationMinProportion_local * doc.getTokens().size());
 
             for (int topicIndex = 0; topicIndex < topicCount; topicIndex++) {
-                if (doc.topicCounts[topicIndex] >= tokenCutoff) {
+                if (doc.topicCounts(topicIndex) >= tokenCutoff) {
                     documentTopics.add(topicIndex);
                     topicProbabilities[topicIndex]++; // Count the number of docs with this topic
                 }

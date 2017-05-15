@@ -93,14 +93,14 @@ public class Lda {
         lowerCaseFilter = new LowerCase();
     }
 
-    private List<TupleTwo<Integer, TupleTwo<List<String>, Long>>> map1(List<Document> batch1){
+    private List<TupleTwo<Integer, TupleTwo<List<String>, String>>> map1(List<String> batch1){
 
         int m = batch1.size();
 
-        List<TupleTwo<Integer, TupleTwo<List<String>, Long>>> result = new ArrayList<>();
+        List<TupleTwo<Integer, TupleTwo<List<String>, String>>> result = new ArrayList<>();
         for(int i=0; i < m; ++i){
-            Document doc = batch1.get(i);
-            List<String> words = BasicTokenizer.doTokenize(doc.getText());
+            String doc = batch1.get(i);
+            List<String> words = BasicTokenizer.doTokenize(doc);
 
             words = trim(words);
 
@@ -108,7 +108,7 @@ public class Lda {
             words = stopWordFilter.filter(words);
 
             if(!words.isEmpty()){
-                TupleTwo<Integer, TupleTwo<List<String>, Long>> tuple = new TupleTwo<>(i, new TupleTwo<>(words, (long)i));
+                TupleTwo<Integer, TupleTwo<List<String>, String>> tuple = new TupleTwo<>(i, new TupleTwo<>(words, doc));
                 result.add(tuple);
             }
         }
@@ -141,13 +141,13 @@ public class Lda {
     }
 
 
-    public LdaResult fit(List<Document> batch0) {
+    public LdaResult fit(List<String> docs) {
         stopWordFilter.setRemoveNumbers(removeNumber);
         stopWordFilter.setRemoveIPAddress(removeIPAddress);
 
         notifyProgressChanged("Data preprocessing ...");
 
-        List<TupleTwo<Integer, TupleTwo<List<String>, Long>>> batch = map1(batch0);
+        List<TupleTwo<Integer, TupleTwo<List<String>, String>>> batch = map1(docs);
 
         notifyProgressChanged("Model building ...");
 
@@ -166,20 +166,20 @@ public class Lda {
 
         List<Doc> documents = new ArrayList<>();
         for(int docIndex = 0; docIndex < size; ++docIndex){
-            TupleTwo<List<String>, Long> doc_tt = batch.get(docIndex)._2();
+            TupleTwo<List<String>, String> doc_tt = batch.get(docIndex)._2();
             List<String> doc = doc_tt._1();
-            long timestamp = doc_tt._2();
+            String text = doc_tt._2();
 
             Doc document = new Doc(topicCount);
-            document.docIndex = docIndex;
-            document.timestamp = timestamp;
+            document.setDocIndex(docIndex);
+            document.setContent(text);
 
 
             for(int i=0; i < doc.size(); ++i){
 
                 String word = doc.get(i);
 
-                int wordIndex = model.vocabulary.indexOf(word);
+                int wordIndex = model.getVocabulary().indexOf(word);
                 int topicIndex = random.nextInt(topicCount);
 
                 if(wordIndex==-1) continue;
@@ -202,28 +202,28 @@ public class Lda {
 
             for(int docIndex=0; docIndex < size; ++docIndex){
                 Doc currentDoc = documents.get(docIndex);
-                int[] docTopicCounts = currentDoc.topicCounts;
+                //int[] docTopicCounts = currentDoc.topicCounts;
 
-                for (int position = 0; position < currentDoc.tokens.size(); position++) {
-                    Token token = currentDoc.tokens.get(position);
+                for (int position = 0; position < currentDoc.getTokens().size(); position++) {
+                    Token token = currentDoc.getTokens().get(position);
 
                     model.tokensPerTopic[token.getTopicIndex()]--;
 
                     int[] currentWordTopicCounts = model.wordTopicCounts[token.getWordIndex()];
 
                     currentWordTopicCounts[ token.getTopicIndex() ]--;
-                    docTopicCounts[ token.getTopicIndex() ]--;
+                    currentDoc.decTopicCount(token.getTopicIndex());
 
                     for (int topicIndex = 0; topicIndex < topicCount; topicIndex++) {
                         if (currentWordTopicCounts[topicIndex] > 0) {
                             topicWeights[topicIndex] =
-                                    (documentTopicSmoothing + docTopicCounts[topicIndex]) *
+                                    (documentTopicSmoothing + currentDoc.topicCounts(topicIndex)) *
                                             (topicWordSmoothing + currentWordTopicCounts[ topicIndex ]) /
                                             (wordCount * topicWordSmoothing + model.tokensPerTopic[topicIndex]);
                         }
                         else {
                             topicWeights[topicIndex] =
-                                    (documentTopicSmoothing + docTopicCounts[topicIndex]) * topicWordSmoothing /
+                                    (documentTopicSmoothing + currentDoc.topicCounts(topicIndex)) * topicWordSmoothing /
                                             (wordCount * topicWordSmoothing + model.tokensPerTopic[topicIndex]);
                         }
                     }
@@ -237,7 +237,7 @@ public class Lda {
                     else {
                         currentWordTopicCounts[ token.getTopicIndex() ] += 1;
                     }
-                    docTopicCounts[ token.getTopicIndex() ]++;
+                    currentDoc.incTopicCount(token.getTopicIndex());
                 }
             }
 
@@ -276,12 +276,12 @@ public class Lda {
         return sum;
     }
 
-    private List<TupleTwo<String, Integer>> map2(List<TupleTwo<Integer, TupleTwo<List<String>, Long>>> batch){
+    private List<TupleTwo<String, Integer>> map2(List<TupleTwo<Integer, TupleTwo<List<String>, String>>> batch){
         Map<String, Integer> wordCounts = new HashMap<>();
 
         String word;
         for(int i=0; i < batch.size(); ++i){
-            TupleTwo<Integer, TupleTwo<List<String>, Long>> t = batch.get(i);
+            TupleTwo<Integer, TupleTwo<List<String>, String>> t = batch.get(i);
             List<String> t2 = t._2()._1();
             for(int j=0; j < t2.size(); ++j){
                 word = t2.get(j);
@@ -301,24 +301,24 @@ public class Lda {
         return result;
     }
 
-    private void buildModel(List<TupleTwo<Integer, TupleTwo<List<String>, Long>>> batch){
+    private void buildModel(List<TupleTwo<Integer, TupleTwo<List<String>, String>>> batch){
         model = new LdaModel();
 
-        model.topicCount = topicCount;
-        model.documentTopicSmoothing = documentTopicSmoothing;
-        model.topicWordSmoothing = topicWordSmoothing;
-        model.correlationMinTokens = correlationMinTokens;
-        model.correlationMinProportion = correlationMinProportion;
-        model.docSortSmoothing = docSortSmoothing;
-        model.retainRawData = retainRawData;
-        model.maxVocabularySize = maxVocabularySize;
+        model.setTopicCount(topicCount);
+        model.setDocumentTopicSmoothing(documentTopicSmoothing);
+        model.setTopicWordSmoothing(topicWordSmoothing);
+        model.setCorrelationMinTokens(correlationMinTokens);
+        model.setCorrelationMinProportion(correlationMinProportion);
+        model.setDocSortSmoothing(docSortSmoothing);
+        model.setRetainRawData(retainRawData);
+        model.setMaxVocabularySize(maxVocabularySize);
 
         List<TupleTwo<String, Integer>> batch3 = map2(batch);
 
         List<String> candidates = new ArrayList<>();
         long count = batch3.size();
 
-        if(model.maxVocabularySize < count) {
+        if(model.getMaxVocabularySize() < count) {
             //sort descendingly
             batch3.sort((t1, t2)->{
                 int f1 = t1._2();
@@ -328,7 +328,7 @@ public class Lda {
                 else if (f1 == f2) return 0;
                 else return 1;
             });
-            for(int i=0; i < model.maxVocabularySize; ++i){
+            for(int i=0; i < model.getMaxVocabularySize(); ++i){
                 candidates.add(batch3.get(i)._1());
             }
         } else {

@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class Frequency implements Serializable, Cloneable {
+public class Frequency implements Serializable {
     private int wordIndex;
     private int count;
 
@@ -25,8 +25,7 @@ public class Frequency implements Serializable, Cloneable {
         this.count = 0;
     }
 
-    @Override
-    public Object clone(){
+    public Frequency makeCopy(){
         Frequency clone = new Frequency(wordIndex, count);
         return clone;
     }

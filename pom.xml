@@ -391,9 +391,9 @@
 
         <!-- Logging -->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.20</version>
         </dependency>
 
 
@@ -490,7 +490,7 @@
         <dependency>
             <groupId>com.github.chen0040</groupId>
             <artifactId>java-data-text</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
