@@ -18,7 +18,7 @@ Package provides java implementation of the latent dirichlet allocation (LDA) fo
 
 The sample code belows created a LDA which takes in the texts stored in "docs" list and created 20 different topics from these texts: 
 
-```
+```java
 import com.github.chen0040.data.utils.TupleTwo;
 import com.github.chen0040.lda.Lda;
 
