@@ -2,6 +2,7 @@ package com.github.chen0040.lda;
 
 import com.github.chen0040.data.text.BasicTokenizer;
 import com.github.chen0040.data.text.LowerCase;
+import com.github.chen0040.data.text.PorterStemmer;
 import com.github.chen0040.data.text.StopWordRemoval;
 import com.github.chen0040.data.utils.TupleTwo;
 import lombok.AccessLevel;
@@ -41,6 +42,7 @@ public class Lda {
 
     private boolean removeIPAddress = true;
     private boolean removeNumber = true;
+    private boolean stemmerEnabled = false;
 
 
     public LdaModel model;
@@ -52,6 +54,10 @@ public class Lda {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private LowerCase lowerCaseFilter;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private PorterStemmer stemmer;
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
@@ -85,12 +91,14 @@ public class Lda {
         this.model = that.model.makeCopy();
         stopWordFilter = that.stopWordFilter.makeCopy();
         lowerCaseFilter = that.lowerCaseFilter.makeCopy();
+        stemmer = new PorterStemmer();
     }
 
     public Lda(){
        
         stopWordFilter = new StopWordRemoval();
         lowerCaseFilter = new LowerCase();
+        stemmer = new PorterStemmer();
     }
 
     private List<TupleTwo<Integer, TupleTwo<List<String>, String>>> map1(List<String> batch1){
@@ -106,6 +114,10 @@ public class Lda {
 
             words = lowerCaseFilter.filter(words);
             words = stopWordFilter.filter(words);
+
+            if(stemmerEnabled) {
+                words = stemmer.filter(words);
+            }
 
             if(!words.isEmpty()){
                 TupleTwo<Integer, TupleTwo<List<String>, String>> tuple = new TupleTwo<>(i, new TupleTwo<>(words, doc));
@@ -145,7 +157,7 @@ public class Lda {
         stopWordFilter.setRemoveNumbers(removeNumber);
         stopWordFilter.setRemoveIPAddress(removeIPAddress);
 
-        notifyProgressChanged("Data preprocessing ...");
+        notifyProgressChanged("Data pre-processing ...");
 
         List<TupleTwo<Integer, TupleTwo<List<String>, String>>> batch = map1(docs);
 

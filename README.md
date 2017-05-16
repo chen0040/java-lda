@@ -9,7 +9,7 @@ Package provides java implementation of the latent dirichlet allocation (LDA) fo
 <dependency>
   <groupId>com.github.chen0040</groupId>
   <artifactId>java-lda</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ```
 
@@ -27,6 +27,9 @@ List<String> docs = Arrays.asList("[paragraph1]", "[paragraph2]", ..., "[paragra
 Lda method = new Lda();
 method.setTopicCount(20);
 method.setMaxVocabularySize(100000);
+//method.setStemmerEnabled(true);
+//method.setRemoveNumbers(true);
+//method.addStopWords(Arrays.asList("we", "they"));
 
 LdaResult result = method.fit(docs);
 

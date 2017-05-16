@@ -50,6 +50,7 @@ public class LdaUnitTest {
       Lda method = new Lda();
       method.setTopicCount(20);
       method.setMaxVocabularySize(100000);
+      method.setStemmerEnabled(true);
       LdaResult result = method.fit(docs);
 
       int topicCount = result.topicCount();
