@@ -35,7 +35,7 @@ public class Lda {
     private double docSortSmoothing = 10.0;
 
     private boolean retainRawData = false;
-    private int maxVocabularySize = 1000000;
+    private int maxVocabularySize = 20000;
 
     private int maxSweepCount = 50;
     private int maxTopicSummaryLength = 20;

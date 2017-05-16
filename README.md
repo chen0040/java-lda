@@ -26,7 +26,7 @@ List<String> docs = Arrays.asList("[paragraph1]", "[paragraph2]", ..., "[paragra
 
 Lda method = new Lda();
 method.setTopicCount(20);
-method.setMaxVocabularySize(100000);
+method.setMaxVocabularySize(20000);
 //method.setStemmerEnabled(true);
 //method.setRemoveNumbers(true);
 //method.addStopWords(Arrays.asList("we", "they"));
