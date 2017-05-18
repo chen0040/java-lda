@@ -6,7 +6,7 @@
 
     <groupId>com.github.chen0040</groupId>
     <artifactId>java-lda</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <licenses>
         <license>
@@ -396,6 +396,12 @@
             <version>1.7.20</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.20</version>
+        </dependency>
+
 
         <!-- Testing -->
         <dependency>
@@ -490,7 +496,7 @@
         <dependency>
             <groupId>com.github.chen0040</groupId>
             <artifactId>java-data-text</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
 
         <dependency>

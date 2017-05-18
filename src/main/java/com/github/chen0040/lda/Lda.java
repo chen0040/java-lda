@@ -43,6 +43,7 @@ public class Lda {
     private boolean removeIPAddress = true;
     private boolean removeNumber = true;
     private boolean stemmerEnabled = false;
+    private boolean removeXmlTag = true;
 
 
     public LdaModel model;
@@ -88,6 +89,11 @@ public class Lda {
     }
 
     public void copy(Lda that){
+        this.removeIPAddress = that.removeIPAddress;
+        this.removeNumber = that.removeNumber;
+        this.removeXmlTag = that.removeXmlTag;
+        this.stemmerEnabled = that.stemmerEnabled;
+
         this.model = that.model.makeCopy();
         stopWordFilter = that.stopWordFilter.makeCopy();
         lowerCaseFilter = that.lowerCaseFilter.makeCopy();
@@ -156,6 +162,7 @@ public class Lda {
     public LdaResult fit(List<String> docs) {
         stopWordFilter.setRemoveNumbers(removeNumber);
         stopWordFilter.setRemoveIPAddress(removeIPAddress);
+        stopWordFilter.setRemoveXmlTag(removeXmlTag);
 
         notifyProgressChanged("Data pre-processing ...");
 
